@@ -34,6 +34,7 @@ public class LinkTrackerService implements ILinkTrackerService {
             if (!checkIfExist(linkStorage)) {
                 linkStorage.setUrlAlias(randomString());
                 linkStorage.setUsos(0L);
+
                 return LinkStorageMapper.toResponseDTO(linkStorageRepository.save(linkStorage));
             }
             else throw new LinkStorageAlreadyExistException();
@@ -53,14 +54,22 @@ public class LinkTrackerService implements ILinkTrackerService {
     }
 
     private String randomString(){
-        int leftLimit = 65; // letter 'a'
+        int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 5;
         Random random = new Random();
 
-        return random.ints(leftLimit, rightLimit + 1)
+        String s = random.ints(leftLimit, rightLimit + 1)
                 .limit(targetStringLength)
                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                 .toString();
+        StringBuilder result= new StringBuilder();
+        char[] charArray = s.toCharArray();
+        for (int i = 0, charArrayLength = charArray.length; i < charArrayLength; i++) {
+            String temp= String.valueOf(charArray[i]);
+            if (i%2==0) result.append(temp.toLowerCase());
+            else result.append(temp.toUpperCase());
+        }
+        return result.toString();
     }
 }
