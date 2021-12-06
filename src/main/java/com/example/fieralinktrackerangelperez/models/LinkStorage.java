@@ -22,4 +22,5 @@ public class LinkStorage {
     private String url;
     private String urlAlias;
     private Long usos;
+    private boolean valido;
 }

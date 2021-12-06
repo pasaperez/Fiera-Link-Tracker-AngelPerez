@@ -3,6 +3,7 @@ package com.example.fieralinktrackerangelperez.services;
 import com.example.fieralinktrackerangelperez.dtos.LinkRequestDTO;
 import com.example.fieralinktrackerangelperez.dtos.LinkResponseDTO;
 import com.example.fieralinktrackerangelperez.exceptions.LinkStorageAlreadyExistException;
+import com.example.fieralinktrackerangelperez.exceptions.UrlInvalidException;
 import com.example.fieralinktrackerangelperez.exceptions.UrlNotValidException;
 import com.example.fieralinktrackerangelperez.mappers.LinkStorageMapper;
 import com.example.fieralinktrackerangelperez.models.LinkStorage;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -34,6 +36,7 @@ public class LinkTrackerService implements ILinkTrackerService {
             if (!checkIfExist(linkStorage)) {
                 linkStorage.setUrlAlias(randomString());
                 linkStorage.setUsos(0L);
+                linkStorage.setValido(true);
 
                 return LinkStorageMapper.toResponseDTO(linkStorageRepository.save(linkStorage));
             }
@@ -71,5 +74,17 @@ public class LinkTrackerService implements ILinkTrackerService {
             else result.append(temp.toUpperCase());
         }
         return result.toString();
+    }
+
+    @Override
+    public String redirect(String subUrl) throws UrlInvalidException {
+        Optional<LinkStorage> linkStorageOptional= linkStorageRepository.findByUrlAlias(subUrl);
+        if (linkStorageOptional.isPresent() && linkStorageOptional.get().isValido())
+        {
+            LinkStorage linkStorage= linkStorageOptional.get();
+            linkStorage.setUsos(linkStorage.getUsos()+1);
+            return linkStorageRepository.save(linkStorage).getUrl();
+        }
+        else throw new UrlInvalidException();
     }
 }

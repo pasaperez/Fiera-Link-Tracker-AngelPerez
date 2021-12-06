@@ -35,7 +35,7 @@ public class LinkStorageMapper {
         LinkResponseDTO linkResponseDTO= new LinkResponseDTO();
         linkResponseDTO.setLink(linkStorage.getUrl());
         linkResponseDTO.setTarget("http://" + serverUrl + ":" + port +"/I/" + linkStorage.getUrlAlias());
-        linkResponseDTO.setValid(true);
+        linkResponseDTO.setValid(linkStorage.isValido());
 
         return linkResponseDTO;
     }
