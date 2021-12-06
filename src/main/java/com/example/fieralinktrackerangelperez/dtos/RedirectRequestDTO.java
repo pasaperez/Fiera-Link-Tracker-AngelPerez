@@ -9,4 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RedirectRequestDTO {
     private String subUrl;
+    private String password;
 }

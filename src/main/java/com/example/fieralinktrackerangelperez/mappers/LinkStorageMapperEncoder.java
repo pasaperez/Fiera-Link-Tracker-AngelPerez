@@ -2,15 +2,15 @@ package com.example.fieralinktrackerangelperez.mappers;
 
 import com.example.fieralinktrackerangelperez.dtos.LinkRequestDTO;
 import com.example.fieralinktrackerangelperez.dtos.LinkResponseDTO;
-import com.example.fieralinktrackerangelperez.dtos.StatRequestDTO;
 import com.example.fieralinktrackerangelperez.dtos.StatResponseDTO;
 import com.example.fieralinktrackerangelperez.models.LinkStorage;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @SuppressWarnings("HttpUrlsUsage")
-public class LinkStorageMapper {
+public class LinkStorageMapperEncoder {
 
     private static String serverUrl;
     private static String port;
@@ -28,6 +28,9 @@ public class LinkStorageMapper {
     {
         LinkStorage linkStorage= new LinkStorage();
         linkStorage.setUrl(linkRequestDTO.getUrl());
+
+        BCryptPasswordEncoder bCryptPasswordEncoder= new BCryptPasswordEncoder();
+        linkStorage.setPassword(bCryptPasswordEncoder.encode(linkRequestDTO.getPassword()));
 
         return linkStorage;
     }
@@ -48,5 +51,13 @@ public class LinkStorageMapper {
         statResponseDTO.setUsos(linkStorage.getUsos());
         statResponseDTO.setValid(linkStorage.isValido());
         return statResponseDTO;
+    }
+
+    public static String encode(String password){
+        return new BCryptPasswordEncoder().encode(password);
+    }
+
+    public static boolean decode(String password, String passEncode){
+        return new BCryptPasswordEncoder().matches(password, passEncode);
     }
 }
