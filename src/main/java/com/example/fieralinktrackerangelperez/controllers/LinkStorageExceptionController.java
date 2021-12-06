@@ -3,7 +3,7 @@ package com.example.fieralinktrackerangelperez.controllers;
 import com.example.fieralinktrackerangelperez.dtos.ErrorDTO;
 import com.example.fieralinktrackerangelperez.exceptions.LinkStorageAlreadyExistException;
 import com.example.fieralinktrackerangelperez.exceptions.UrlInvalidException;
-import com.example.fieralinktrackerangelperez.exceptions.UrlNotValidException;
+import com.example.fieralinktrackerangelperez.exceptions.UrlNotValidOrNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -22,8 +22,8 @@ public class LinkStorageExceptionController {
         return new ResponseEntity<>(e.getError(),e.getStatus());
     }
 
-    @ExceptionHandler(UrlNotValidException.class)
-    ResponseEntity<ErrorDTO> handleGlobalExceptions(UrlNotValidException e) {
+    @ExceptionHandler(UrlNotValidOrNotFoundException.class)
+    ResponseEntity<ErrorDTO> handleGlobalExceptions(UrlNotValidOrNotFoundException e) {
         return new ResponseEntity<>(e.getError(),e.getStatus());
     }
 

@@ -3,7 +3,7 @@ package com.example.fieralinktrackerangelperez.services;
 import com.example.fieralinktrackerangelperez.dtos.*;
 import com.example.fieralinktrackerangelperez.exceptions.LinkStorageAlreadyExistException;
 import com.example.fieralinktrackerangelperez.exceptions.UrlInvalidException;
-import com.example.fieralinktrackerangelperez.exceptions.UrlNotValidException;
+import com.example.fieralinktrackerangelperez.exceptions.UrlNotValidOrNotFoundException;
 import com.example.fieralinktrackerangelperez.mappers.LinkStorageMapper;
 import com.example.fieralinktrackerangelperez.models.LinkStorage;
 import com.example.fieralinktrackerangelperez.repositories.LinkStorageRepository;
@@ -25,7 +25,7 @@ public class LinkTrackerService implements ILinkTrackerService {
     protected LinkStorageRepository linkStorageRepository;
 
     @Override
-    public LinkResponseDTO create(LinkRequestDTO linkRequestDTO) throws LinkStorageAlreadyExistException, UrlNotValidException {
+    public LinkResponseDTO create(LinkRequestDTO linkRequestDTO) throws LinkStorageAlreadyExistException, UrlNotValidOrNotFoundException {
 
         String[] schemes = {"http","https"};
         UrlValidator urlValidator = new UrlValidator(schemes);
@@ -42,7 +42,7 @@ public class LinkTrackerService implements ILinkTrackerService {
             }
             else throw new LinkStorageAlreadyExistException();
         }
-        else throw new UrlNotValidException();
+        else throw new UrlNotValidOrNotFoundException();
     }
 
     private boolean checkIfExist(LinkStorage linkStorage) {
@@ -77,22 +77,39 @@ public class LinkTrackerService implements ILinkTrackerService {
     }
 
     @Override
-    public ModelAndView redirect(RedirectRequestDTO redirectRequestDTO) throws UrlInvalidException {
+    public ModelAndView redirect(RedirectRequestDTO redirectRequestDTO) throws UrlInvalidException, UrlNotValidOrNotFoundException {
         Optional<LinkStorage> linkStorageOptional= linkStorageRepository.findByUrlAlias(redirectRequestDTO.getSubUrl());
-        if (linkStorageOptional.isPresent() && linkStorageOptional.get().isValido())
+        if (linkStorageOptional.isPresent())
         {
-            LinkStorage linkStorage= linkStorageOptional.get();
-            linkStorage.setUsos(linkStorage.getUsos()+1);
-            return new ModelAndView("redirect:"+linkStorageRepository.save(linkStorage).getUrl());
+            if (linkStorageOptional.get().isValido())
+            {
+                LinkStorage linkStorage= linkStorageOptional.get();
+                linkStorage.setUsos(linkStorage.getUsos()+1);
+                return new ModelAndView("redirect:"+linkStorageRepository.save(linkStorage).getUrl());
+            }
+            else throw new UrlInvalidException();
         }
-        else throw new UrlInvalidException();
+        else throw new UrlNotValidOrNotFoundException();
     }
 
     @Override
-    public StatResponseDTO stats(StatRequestDTO statRequestDTO) throws UrlNotValidException{
+    public StatResponseDTO stats(StatRequestDTO statRequestDTO) throws UrlNotValidOrNotFoundException {
         Optional<LinkStorage> linkStorageOptional= linkStorageRepository.findByUrlAlias(statRequestDTO.getUrlToStats());
 
         if (linkStorageOptional.isPresent()) return LinkStorageMapper.linkStorageToStatResponseDTO(linkStorageOptional.get());
-        else throw new UrlNotValidException();
+        else throw new UrlNotValidOrNotFoundException();
+    }
+
+    @Override
+    public Boolean invalidate(InvalidateRequestDTO invalidateRequestDTO) throws UrlNotValidOrNotFoundException {
+        Optional<LinkStorage> linkStorageOptional= linkStorageRepository.findByUrlAlias(invalidateRequestDTO.getUrlToInvalidate());
+        if (linkStorageOptional.isPresent())
+        {
+            LinkStorage linkStorage= linkStorageOptional.get();
+            linkStorage.setValido(false);
+            linkStorageRepository.save(linkStorage);
+            return Boolean.TRUE;
+        }
+        else throw new UrlNotValidOrNotFoundException();
     }
 }
