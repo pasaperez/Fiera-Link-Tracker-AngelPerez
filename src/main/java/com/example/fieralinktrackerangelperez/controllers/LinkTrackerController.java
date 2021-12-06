@@ -22,14 +22,14 @@ public class LinkTrackerController {
 
     @PostMapping(path = "create", consumes = {MediaType.APPLICATION_FORM_URLENCODED_VALUE})
     public ResponseEntity<LinkResponseDTO> create(LinkRequestDTO linkRequestDTO) throws LinkStorageAlreadyExistException, UrlNotValidOrNotFoundException {
-        System.out.println(linkRequestDTO.toString());
         return new ResponseEntity<>(iLinkTrackerService.create(linkRequestDTO), HttpStatus.OK);
     }
 
     @GetMapping(path = "I/{subUrl}")
-    public ModelAndView redirect(@PathVariable @Validated String subUrl) throws UrlInvalidException, UrlNotValidOrNotFoundException {
+    public ModelAndView redirect(@PathVariable @Validated String subUrl, @RequestParam(required = false) @Validated String password) throws UrlInvalidException, UrlNotValidOrNotFoundException {
         RedirectRequestDTO redirectRequestDTO = new RedirectRequestDTO();
         redirectRequestDTO.setSubUrl(subUrl);
+        redirectRequestDTO.setPassword(password==null ? "" : password);
         return iLinkTrackerService.redirect(redirectRequestDTO);
     }
 

@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class LinkRequestDTO {
     private String url;
+    private String password;
 }

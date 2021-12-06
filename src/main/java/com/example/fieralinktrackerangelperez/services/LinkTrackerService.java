@@ -4,7 +4,7 @@ import com.example.fieralinktrackerangelperez.dtos.*;
 import com.example.fieralinktrackerangelperez.exceptions.LinkStorageAlreadyExistException;
 import com.example.fieralinktrackerangelperez.exceptions.UrlInvalidException;
 import com.example.fieralinktrackerangelperez.exceptions.UrlNotValidOrNotFoundException;
-import com.example.fieralinktrackerangelperez.mappers.LinkStorageMapper;
+import com.example.fieralinktrackerangelperez.mappers.LinkStorageMapperEncoder;
 import com.example.fieralinktrackerangelperez.models.LinkStorage;
 import com.example.fieralinktrackerangelperez.repositories.LinkStorageRepository;
 import com.example.fieralinktrackerangelperez.services.interfaces.ILinkTrackerService;
@@ -31,14 +31,14 @@ public class LinkTrackerService implements ILinkTrackerService {
         UrlValidator urlValidator = new UrlValidator(schemes);
         if (urlValidator.isValid(linkRequestDTO.getUrl())) {
 
-            LinkStorage linkStorage= LinkStorageMapper.linkRequestDToLinkStorage(linkRequestDTO);
+            LinkStorage linkStorage= LinkStorageMapperEncoder.linkRequestDToLinkStorage(linkRequestDTO);
 
             if (!checkIfExist(linkStorage)) {
                 linkStorage.setUrlAlias(randomString());
                 linkStorage.setUsos(0L);
                 linkStorage.setValido(true);
 
-                return LinkStorageMapper.linkStorageToLinkResponseDTO(linkStorageRepository.save(linkStorage));
+                return LinkStorageMapperEncoder.linkStorageToLinkResponseDTO(linkStorageRepository.save(linkStorage));
             }
             else throw new LinkStorageAlreadyExistException();
         }
@@ -79,9 +79,10 @@ public class LinkTrackerService implements ILinkTrackerService {
     @Override
     public ModelAndView redirect(RedirectRequestDTO redirectRequestDTO) throws UrlInvalidException, UrlNotValidOrNotFoundException {
         Optional<LinkStorage> linkStorageOptional= linkStorageRepository.findByUrlAlias(redirectRequestDTO.getSubUrl());
+
         if (linkStorageOptional.isPresent())
         {
-            if (linkStorageOptional.get().isValido())
+            if (linkStorageOptional.get().isValido() && LinkStorageMapperEncoder.decode(redirectRequestDTO.getPassword(), linkStorageOptional.get().getPassword()))
             {
                 LinkStorage linkStorage= linkStorageOptional.get();
                 linkStorage.setUsos(linkStorage.getUsos()+1);
@@ -96,7 +97,7 @@ public class LinkTrackerService implements ILinkTrackerService {
     public StatResponseDTO stats(StatRequestDTO statRequestDTO) throws UrlNotValidOrNotFoundException {
         Optional<LinkStorage> linkStorageOptional= linkStorageRepository.findByUrlAlias(statRequestDTO.getUrlToStats());
 
-        if (linkStorageOptional.isPresent()) return LinkStorageMapper.linkStorageToStatResponseDTO(linkStorageOptional.get());
+        if (linkStorageOptional.isPresent()) return LinkStorageMapperEncoder.linkStorageToStatResponseDTO(linkStorageOptional.get());
         else throw new UrlNotValidOrNotFoundException();
     }
 

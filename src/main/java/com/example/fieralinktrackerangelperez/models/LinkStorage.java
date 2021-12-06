@@ -23,4 +23,5 @@ public class LinkStorage {
     private String urlAlias;
     private Long usos;
     private boolean valido;
+    private String password;
 }
