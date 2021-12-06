@@ -2,6 +2,8 @@ package com.example.fieralinktrackerangelperez.mappers;
 
 import com.example.fieralinktrackerangelperez.dtos.LinkRequestDTO;
 import com.example.fieralinktrackerangelperez.dtos.LinkResponseDTO;
+import com.example.fieralinktrackerangelperez.dtos.StatRequestDTO;
+import com.example.fieralinktrackerangelperez.dtos.StatResponseDTO;
 import com.example.fieralinktrackerangelperez.models.LinkStorage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -22,7 +24,7 @@ public class LinkStorageMapper {
         port = value;
     }
 
-    public static LinkStorage toLinkStorage(LinkRequestDTO linkRequestDTO)
+    public static LinkStorage linkRequestDToLinkStorage(LinkRequestDTO linkRequestDTO)
     {
         LinkStorage linkStorage= new LinkStorage();
         linkStorage.setUrl(linkRequestDTO.getUrl());
@@ -30,7 +32,7 @@ public class LinkStorageMapper {
         return linkStorage;
     }
 
-    public static LinkResponseDTO toResponseDTO(LinkStorage linkStorage)
+    public static LinkResponseDTO linkStorageToLinkResponseDTO(LinkStorage linkStorage)
     {
         LinkResponseDTO linkResponseDTO= new LinkResponseDTO();
         linkResponseDTO.setLink(linkStorage.getUrl());
@@ -38,5 +40,13 @@ public class LinkStorageMapper {
         linkResponseDTO.setValid(linkStorage.isValido());
 
         return linkResponseDTO;
+    }
+
+    public static StatResponseDTO linkStorageToStatResponseDTO(LinkStorage linkStorage)
+    {
+        StatResponseDTO statResponseDTO= new StatResponseDTO();
+        statResponseDTO.setUsos(linkStorage.getUsos());
+        statResponseDTO.setValid(linkStorage.isValido());
+        return statResponseDTO;
     }
 }
