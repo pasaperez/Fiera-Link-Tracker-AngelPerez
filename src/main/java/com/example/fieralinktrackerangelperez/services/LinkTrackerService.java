@@ -13,6 +13,7 @@ import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -82,13 +83,21 @@ public class LinkTrackerService implements ILinkTrackerService {
 
         if (linkStorageOptional.isPresent())
         {
-            if (linkStorageOptional.get().isValido() && LinkStorageMapperEncoder.decode(redirectRequestDTO.getPassword(), linkStorageOptional.get().getPassword()))
-            {
-                LinkStorage linkStorage= linkStorageOptional.get();
-                linkStorage.setUsos(linkStorage.getUsos()+1);
-                return new ModelAndView("redirect:"+linkStorageRepository.save(linkStorage).getUrl());
+            if (!linkStorageOptional.get().getExpiration().isBefore(LocalDate.now())) {
+                if (linkStorageOptional.get().isValido() && LinkStorageMapperEncoder.decode(redirectRequestDTO.getPassword(), linkStorageOptional.get().getPassword()))
+                {
+
+                    LinkStorage linkStorage= linkStorageOptional.get();
+                    linkStorage.setUsos(linkStorage.getUsos()+1);
+                    return new ModelAndView("redirect:"+linkStorageRepository.save(linkStorage).getUrl());
+                }
+                else throw new UrlInvalidException();
             }
-            else throw new UrlInvalidException();
+            else
+            {
+                invalidate(new InvalidateRequestDTO(linkStorageOptional.get().getUrlAlias()));
+                throw new UrlInvalidException();
+            }
         }
         else throw new UrlNotValidOrNotFoundException();
     }
