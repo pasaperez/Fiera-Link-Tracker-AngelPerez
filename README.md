@@ -68,7 +68,7 @@ Para 2° y 3° el parámetro {subUrl} es el postfijo que se crea en el endpoint 
 
 Para 1° en la última version del código (clone por default) se debe adjuntar al final del link: ´?password=´ <password ingresado en /create> 
 
-###Se puede acceder a la base de datos
+### Se puede acceder a la base de datos
 
 Ingresando al siguiente link:
 
@@ -79,10 +79,10 @@ Usuario: sa
 Password:
 (Vació)
 
-###Diagrama básico de clases/datos
+### Diagrama básico de clases/datos
 ![Diagrama](https://raw.githubusercontent.com/pasaperez/Fiera-Link-Tracker-AngelPerez/main/src/main/resources/Modelo-Datos-Unico.png)
 
-####Pregunta extra
+#### Pregunta extra
 ¿Cómo se optimizaría la implementation y la base de datos para publicar en producción, para asegurar una alta demanda simultánea de requests.?
 
 Este sistema se puede implementar con spring cloud o con sistemas alternativos, en los cuales se replica multiples veces el sistema lógico o se dividen los endpoints. 
