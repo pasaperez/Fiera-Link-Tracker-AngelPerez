@@ -8,6 +8,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 @Component
 @SuppressWarnings("HttpUrlsUsage")
 public class LinkStorageMapperEncoder {
@@ -30,7 +36,19 @@ public class LinkStorageMapperEncoder {
         linkStorage.setUrl(linkRequestDTO.getUrl());
 
         BCryptPasswordEncoder bCryptPasswordEncoder= new BCryptPasswordEncoder();
-        linkStorage.setPassword(bCryptPasswordEncoder.encode(linkRequestDTO.getPassword()));
+        linkStorage.setPassword(bCryptPasswordEncoder.encode(linkRequestDTO.getPassword()== null ? "" : linkRequestDTO.getPassword()));
+
+        Date date=null;
+        try {
+            date=new SimpleDateFormat("dd/MM/yyyy").parse(linkRequestDTO.getExpiration());
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+        }
+        LocalDate localDate;
+        if (date==null) localDate = LocalDate.MAX;
+        else localDate= date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        linkStorage.setExpiration(localDate);
 
         return linkStorage;
     }

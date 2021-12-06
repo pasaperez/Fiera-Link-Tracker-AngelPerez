@@ -12,4 +12,5 @@ import lombok.Setter;
 public class LinkRequestDTO {
     private String url;
     private String password;
+    private String expiration;
 }

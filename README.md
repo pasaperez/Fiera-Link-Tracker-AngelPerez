@@ -68,6 +68,10 @@ Para 2° y 3° el parámetro {subUrl} es el postfijo que se crea en el endpoint 
 
 Para 1° en la última version del código (clone por default) se debe adjuntar al final del link: ´?password=´ <password ingresado en /create> 
 
+##### Se agregaron los 2 requisitos extras en la creación
+* Inserción de password (No es obligatorio el campo, si no se ingresa no hace falta envío de la query de ´?password=´)
+* Inserción de fecha de expiración [Formato= "dd/MM/yyyy"] (No es obligatorio el campo, si no se ingresa el link no expira) 
+
 ### Se puede acceder a la base de datos
 
 Ingresando al siguiente link:
