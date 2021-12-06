@@ -45,7 +45,7 @@ public class LinkTrackerService implements ILinkTrackerService {
         else throw new UrlNotValidOrNotFoundException();
     }
 
-    private boolean checkIfExist(LinkStorage linkStorage) {
+    protected boolean checkIfExist(LinkStorage linkStorage) {
         List<LinkStorage> linkStorageList = linkStorageRepository.findAll();
 
         for(LinkStorage linkStorageIt : linkStorageList){
@@ -56,7 +56,7 @@ public class LinkTrackerService implements ILinkTrackerService {
         return false;
     }
 
-    private String randomString(){
+    protected String randomString(){
         int leftLimit = 97; // letter 'a'
         int rightLimit = 122; // letter 'z'
         int targetStringLength = 5;

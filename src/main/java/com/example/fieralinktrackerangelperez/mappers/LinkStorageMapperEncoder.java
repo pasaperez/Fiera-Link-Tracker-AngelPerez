@@ -53,10 +53,6 @@ public class LinkStorageMapperEncoder {
         return statResponseDTO;
     }
 
-    public static String encode(String password){
-        return new BCryptPasswordEncoder().encode(password);
-    }
-
     public static boolean decode(String password, String passEncode){
         return new BCryptPasswordEncoder().matches(password, passEncode);
     }
