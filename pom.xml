@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>Fiera-Link-Tracker-AngelPerez</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>RELEASE-1.0.3</version>
     <name>Fiera-Link-Tracker-AngelPerez</name>
     <description>Fiera-Link-Tracker-AngelPerez</description>
     <properties>
